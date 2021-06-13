@@ -12,7 +12,7 @@ const PrivateRoute = ({ component: Component, ...rest }) => {
 				if (localStorage.getItem("token")) {
 					return <Component {...props} />;
 				} else {
-					return <h1> Please login to continue </h1>;
+					return <h1>Logging out</h1>;
 				}
 			}}
 		/>
