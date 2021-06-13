@@ -20,7 +20,7 @@ const Login = () => {
 			.post("http://localhost:5000/api/login", formValues)
 			.then((res) => {
 				localStorage.setItem("token", res.data.payload);
-				// ! history.push("/where?")
+				history.push("/protected");
 			})
 			.catch((err) => {
 				console.log(err);
