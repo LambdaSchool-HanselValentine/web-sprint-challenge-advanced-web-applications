@@ -1,22 +1,67 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
+import { useHistory } from "react-router-dom";
+import axios from "axios";
 
 const Login = () => {
-  // make a post request to retrieve a token from the api
-  // when you have handled the token, navigate to the BubblePage route
+	// make a post request to retrieve a token from the api
+	// when you have handled the token, navigate to the BubblePage route
 
-  const error = "";
-  //replace with error state
+	const [formValues, setFormValues] = useState({ username: "", password: "" });
+	const [error, setError] = useState("");
 
-  return (
-    <div>
-      <h1>Welcome to the Bubble App!</h1>
-      <div data-testid="loginForm" className="login-form">
-        <h2>Build login form here</h2>
-      </div>
+	const onChangeHandler = (e) => {
+		setFormValues({ ...formValues, [e.target.name]: e.target.value });
+	};
 
-      <p data-testid="errorMessage" className="error">{error}</p>
-    </div>
-  );
+	const history = useHistory();
+	const submitHandler = (e) => {
+		e.preventDefault();
+		axios
+			.post("http://localhost:5000/api/login", formValues)
+			.then((res) => {
+				localStorage.setItem("token", res.data.payload);
+				history.push("/protected");
+			})
+			.catch((err) => {
+				console.log(err);
+				setError("Please enter correct username or password");
+			});
+	};
+
+	// const error = "";
+	// //replace with error state
+
+	return (
+		<div>
+			<h1>Welcome to the Bubble App!</h1>
+			<div data-testid="loginForm" className="login-form">
+				<h2>Login</h2>
+				<form onSubmit={submitHandler}>
+					<input
+						data-testid="username"
+						type="text"
+						name="username"
+						value={formValues.username}
+						onChange={onChangeHandler}
+						placeholder="Enter Username"
+					/>
+					<input
+						data-testid="password"
+						type="password"
+						name="password"
+						value={formValues.password}
+						onChange={onChangeHandler}
+						placeholder="Enter Password"
+					/>
+					<button>Login</button>
+				</form>
+			</div>
+
+			<p data-testid="errorMessage" className="error">
+				{error}
+			</p>
+		</div>
+	);
 };
 
 export default Login;

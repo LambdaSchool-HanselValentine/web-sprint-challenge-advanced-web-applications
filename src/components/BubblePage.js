@@ -1,31 +1,64 @@
 import React, { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
 
 import Bubbles from "./Bubbles";
 import ColorList from "./ColorList";
 
-import { editColorService, deleteColorService } from '../services/colorServices';
-import fetchColorService from '../services/fetchColorService';
+// import {
+// 	editColorService,
+// 	deleteColorService,
+// } from "../services/colorServices";
+import fetchColorService from "../services/fetchColorService";
+import { axiosWithAuth } from "../helpers/axiosWithAuth";
 
 const BubblePage = () => {
-  const [colors, setColors] = useState([]);
-  const [editing, setEditing] = useState(false);
+	const [colors, setColors] = useState([]);
+	const [editing, setEditing] = useState(false);
+	const { id } = useParams();
+	// const { id } = props.match.params;
 
-  const toggleEdit = (value) => {
-    setEditing(value);
-  };
+	useEffect(() => {
+		fetchColorService().then((res) => {
+			setColors(res);
+		});
+	}, []);
 
-  const saveEdit = (editColor) => {
-  };
+	const toggleEdit = (value) => {
+		setEditing(value);
+	};
 
-  const deleteColor = (colorToDelete) => {
-  };
+	const saveEdit = (editColor) => {
+		axiosWithAuth()
+			.put(`http://localhost:5000/api/colors/${id}`, editColor)
+			.then((res) => {
+				setColors([...colors, res.data]);
+				console.log(colors);
+			});
+	};
 
-  return (
-    <div className="container">
-      <ColorList colors={colors} editing={editing} toggleEdit={toggleEdit} saveEdit={saveEdit} deleteColor={deleteColor}/>
-      <Bubbles colors={colors}/>
-    </div>
-  );
+	const deleteColor = (colorToDelete) => {
+		axiosWithAuth()
+			.delete(`http://localhost:5000/api/colors/${colorToDelete.id}`)
+			.then((res) => {
+				// the return data is the ID of the color to delete. So:
+				const colorsArray = colors;
+				setColors(colorsArray.filter((color) => color.id !== res.data));
+			})
+			.catch((err) => console.log(err));
+	};
+
+	return (
+		<div className="container">
+			<ColorList
+				colors={colors}
+				editing={editing}
+				toggleEdit={toggleEdit}
+				saveEdit={saveEdit}
+				deleteColor={deleteColor}
+			/>
+			<Bubbles colors={colors} />
+		</div>
+	);
 };
 
 export default BubblePage;
