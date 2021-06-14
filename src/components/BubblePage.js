@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
 import { useParams } from "react-router-dom";
 
 import Bubbles from "./Bubbles";
@@ -16,11 +15,11 @@ const BubblePage = () => {
 	const [colors, setColors] = useState([]);
 	const [editing, setEditing] = useState(false);
 	const { id } = useParams();
+	// const { id } = props.match.params;
 
 	useEffect(() => {
 		fetchColorService().then((res) => {
 			setColors(res);
-			// console.log(res);
 		});
 	}, []);
 
@@ -33,6 +32,7 @@ const BubblePage = () => {
 			.put(`http://localhost:5000/api/colors/${id}`, editColor)
 			.then((res) => {
 				setColors([...colors, res.data]);
+				console.log(colors);
 			});
 	};
 

@@ -2,7 +2,7 @@
 //1. Build a PrivateRoute component that redirects if user is not logged in
 
 import React from "react";
-import { Route } from "react-router-dom";
+import { Route, Redirect } from "react-router-dom";
 
 const PrivateRoute = ({ component: Component, ...rest }) => {
 	return (
@@ -12,7 +12,7 @@ const PrivateRoute = ({ component: Component, ...rest }) => {
 				if (localStorage.getItem("token")) {
 					return <Component {...props} />;
 				} else {
-					return <h1>Logging out</h1>;
+					return <Redirect to="/" />;
 				}
 			}}
 		/>
