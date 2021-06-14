@@ -29,18 +29,21 @@ const BubblePage = () => {
 	};
 
 	const saveEdit = (editColor) => {
-		axios
+		axiosWithAuth()
 			.put(`http://localhost:5000/api/colors/${id}`, editColor)
 			.then((res) => {
-				console.log(res.data);
-				setColors(res.data);
+				setColors([...colors, res.data]);
 			});
 	};
 
 	const deleteColor = (colorToDelete) => {
-		axios
-			.delete(`http://localhost:5000/api/colors/${colorToDelete}`)
-			.then((res) => console.log(res))
+		axiosWithAuth()
+			.delete(`http://localhost:5000/api/colors/${colorToDelete.id}`)
+			.then((res) => {
+				// the return data is the ID of the color to delete. So:
+				const colorsArray = colors;
+				setColors(colorsArray.filter((color) => color.id !== res.data));
+			})
 			.catch((err) => console.log(err));
 	};
 
